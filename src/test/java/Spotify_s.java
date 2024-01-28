@@ -5,35 +5,8 @@ import org.testng.Assert;
 import static io.restassured.RestAssured.given;
 
 public class Spotify_s{
-    String token = "BQCMfTMdt0vsRpOdMeUg7Qoa24NrNhXNLANWetgUZmUTDNtyJCHU0ZZy2cB2FwPyt0apEKnKQKo6kC2Kc-Y6-5dZ7L6yB5O2elzOrHiRTD3B5h_-RpD6I2r_-GpufitVgeaD1irarWPDWA8XYn6vhEfZ9B_9GZAaUIxAA0anCXJ3MqVP5PFL3lc2Jc6ooe8-XRp1AgbPLliTbdQCHVj4HVxfgPM8CdrCq1_XZzreEmeC8vJqx2bGwfYGPkOipm8epf-ko8t3KA";
+    String token = "BQCG3NZOo5HGHracr4e7GpKDzAyWLIfoQGm5Y1ADQzWY5UyMm3S1Gn-h04juRcPCOhx8NHTp0QtM21AcKCYlZ1iGhWTgfv8t-367vS2-6nRDWcCjKqYzXXYLxEPtEjZ-mY-6VzLBSVPl3Wy1Vlrx6-A9ll1vohDvtFtP_GcXKWgm4hBcGwHxz_WF4QzgI8hGTo_3eSMhqzKTOk9mu2pDkJIM6tNKCACRVSYkT-G2on9kMVRshhREFCl95SSuEHZRgQM8hy3EVw";
     String type = "artists";
-    @Test
-    public void getUserPlaylist() {
-        Response res = given()
-                .header("accept", "application/json")
-                .header("Authorization", "Bearer" + token)
-                .when()
-                .get("https://api.spotify.com/v1/users/nr3vm9usfmicwi3usug5vkqva/playlists?user_id=nr3vm9usfmicwi3usug5vkqva&limit=10&offset=5");
-
-
-    }
- @Test
- public void CreatePlayList()
-    {
-      Response res=given()
-              .header("Content-Type","application/json")
-              .header("Authorization","Bearer " + token )
-              .body("{\n" +
-                      "    \"name\": \"New Playlist\",\n" +
-                      "    \"description\": \"New playlist description\",\n" +
-                      "    \"public\": false\n" +
-                      "}"
-              )
-              .when()
-              .post("https://api.spotify.com/v1/users/nr3vm9usfmicwi3usug5vkqva/playlists");
-      res.prettyPrint();
-      Assert.assertEquals(res.statusCode(),201);
-    }
 
     @Test
     public void GetUserprofile()
@@ -47,19 +20,38 @@ public class Spotify_s{
     @Test
     public void get_Current_Users_Profile()
     {
-        Response res=given().header("Authorization", "Bearer " + token).when().get("https://api.spotify.com/v1/me");
+        Response res=given().header("Authorization", "Bearer " + token).when().get("\n" +
+                "https://api.spotify.com/v1/me");
         Assert.assertEquals(res.statusCode(),200);
         res.prettyPrint();
     }
 
-//    @Test
-//    public void get_Users_top_Item()
-//    {
-//        Response res=given()
-//                .header("Authorization", "Bearer" + token )
-//                .when()
-//                .get("https://api.spotify.com/v1/me/top/{type} "+ type);
-//        Assert.assertEquals(res.statusCode(),200);
-//        res.prettyPrint();
-//    }
+
+    @Test
+    public void followPlayList()
+    {
+        Response res=given()
+                .header("Authorization", "Bearer " + token ).header("Content-Type", "application/json").
+                body(
+                        "{\n" +
+                                "    \"public\": false\n" +
+                                "}")
+                .when()
+                .put("\n" +
+                        "https://api.spotify.com/v1/playlists/4Xf8eiasJ1p8dLHCv7j15Y" +
+                        "/followers");
+        Assert.assertEquals(res.statusCode(),200);
+    }
+
+    @Test
+    public void followArtistOrUser() {
+        Response res = given()
+                .header("accept", "application/json")
+                .header("Content-Type", "application/json")
+                .header("Authorization", "Bearer " + token)
+                .when()
+                .put("https://api.spotify.com/v1/me/following?type=artist&ids=4HQeSXwG2BVH0KvxHE5oCf");
+        res.prettyPrint();
+        Assert.assertEquals(res.statusCode(), 204);
+    }
 }
